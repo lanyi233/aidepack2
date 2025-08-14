@@ -1,6 +1,22 @@
 # Tgaide 插件仓库
 适用于 [apt插件管理器](modules/apt_module.py) 的源仓库
 
+## 使用apt
+- 更新tgaide
+```
+,update
+```
+
+- 安装apt插件
+```
+curl -L https://raw.githubusercontent.com/lanyi233/aidepack2/refs/heads/main/modules/apt_module.py -o third_party_modules/apt_module.py
+```
+
+- 重启实例
+```
+,reboot
+```
+
 - 添加源指令
 ```
 ,apt source add https://raw.githubusercontent.com/lanyi233/aidepack2/refs/heads/main/source.json
