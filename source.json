@@ -1,0 +1,21 @@
+{
+  "name": "lanyi233",
+  "id": "lanyi233",
+  "data": [
+    {
+      "id": "ip",
+      "name": "网络信息查询",
+      "url": "https://raw.githubusercontent.com/lanyi233/aidepack2/main/modules/ip_module.py"
+    },
+    {
+      "id": "apt",
+      "name": "插件管理器",
+      "url": "https://raw.githubusercontent.com/lanyi233/aidepack2/main/modules/apt_module.py"
+    },
+    {
+      "id": "sh",
+      "name": "Shell执行器",
+      "url": "https://raw.githubusercontent.com/lanyi233/aidepack2/main/modules/sh_module.py"
+    }
+  ]
+}
