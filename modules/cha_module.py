@@ -9,6 +9,17 @@ from modules.base_module import BaseModule
 from urllib.parse import unquote
 from bs4 import BeautifulSoup
 import aiohttp
+def _install_package(package_name: str):
+    try:
+        subprocess.check_call(['pip', 'install', package_name])
+        importlib.invalidate_caches()
+    except subprocess.CalledProcessError:
+        raise ImportError(f"Failed to install {package_name}")
+try:
+    import bs4
+except ImportError:
+    _install_package('bs4')
+    import bs4
 
 class SubInfoModule(BaseModule):
     def __init__(self):
@@ -38,52 +49,15 @@ class SubInfoModule(BaseModule):
             "<b>用法</b>\n"
             "• 回复包含订阅链接的消息：<code>,subinfo</code>\n"
             "• 直接使用：<code>,subinfo 订阅链接</code>\n"
-            "<b>功能</b>\n"
-            "1. 自动识别消息中的订阅链接\n"
-            "2. 显示机场名称和流量信息\n"
-            "3. 支持多链接同时查询"
         )
 
     async def module_loaded(self, client) -> None:
         self.client = client
-        # 自动安装依赖
-        await self._install_dependencies()
 
     async def module_unloaded(self) -> None:
         self.client = None
 
-    async def _install_dependencies(self):
-        """自动安装必要的依赖包"""
-        required_packages = ["beautifulsoup4"]
-        for package in required_packages:
-            try:
-                __import__(package)
-                print(f"{package} 已安装")
-            except ImportError:
-                print(f"正在安装 {package}...")
-                process = await asyncio.create_subprocess_exec(
-                    sys.executable, "-m", "pip", "install", package,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE
-                )
-                stdout, stderr = await process.communicate()
-                if process.returncode == 0:
-                    print(f"{package} 安装成功")
-                else:
-                    print(f"安装失败: {stderr.decode()}")
-        
-        # 验证依赖是否安装成功
-        try:
-            __import__("bs4")
-            self.dependencies_installed = True
-        except ImportError:
-            print("依赖安装失败，功能将不可用")
-
-    async def handle_command(self, command: str, event: NewMessage.Event, args: List[str]) -> None:
-        if not self.dependencies_installed:
-            await event.edit("⚠️ 依赖安装失败，功能不可用。请手动安装：<code>pip install beautifulsoup4</code>", parse_mode='html')
-            return
-            
+    async def handle_command(self, command: str, event: NewMessage.Event, args: List[str]) -> None:       
         if command == "subinfo":
             await self._handle_subinfo(event, args)
 
