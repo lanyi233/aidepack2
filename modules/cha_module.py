@@ -46,7 +46,7 @@ class SubInfoModule(BaseModule):
             "name": self.name,
             "description": self.description,
             "version": self.version,
-            "author": "DeepSeek"
+            "author": "@zhetengsha"
         }
 
     def get_command_usage(self, command: str) -> str:
