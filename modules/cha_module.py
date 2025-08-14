@@ -205,7 +205,7 @@ class SubInfoModule(BaseModule):
                                         remaining = total - used_up - used_down
                                         
                                         output_text = (
-                                            f"<b>✈️ 机场名称</b>: <code>{airport_name}</code>\n"
+                                            f"<blockquote><b>✈️ 机场名称</b>: <code>{airport_name}</code>\n"
                                             f"<b>🔗 订阅链接</b>: <code>{url}</code>\n"
                                             f"<b>⬆️ 已用上行</b>: {self.StrOfSize(used_up)}\n"
                                             f"<b>⬇️ 已用下行</b>: {self.StrOfSize(used_down)}\n"
@@ -220,19 +220,19 @@ class SubInfoModule(BaseModule):
                                             
                                             if time_now <= expire_time:
                                                 last_time = expire_time - time_now
-                                                output_text += f"<b>⏳ 有效期至</b>: {time_str} (剩余 {self.sec_to_data(last_time)})\n"
+                                                output_text += f"<b>⏳ 有效期至</b>: {time_str} (剩余 {self.sec_to_data(last_time)})</blockquote>"
                                             else:
-                                                output_text += f"<b>❌ 已过期</b>: {time_str}\n"
+                                                output_text += f"<b>❌ 已过期</b>: {time_str}</blockquote>"
                                         else:
-                                            output_text += "<b>⏳ 有效期</b>: 未知\n"
+                                            output_text += "<b>⏳ 有效期</b>: 未知</blockquote>"
                                         
                                         final_output += output_text + "\n"
                                     else:
-                                        final_output += f"<b>✈️ 机场名称</b>: {airport_name}\n<b>🔗 链接</b>: <code>{url}</code>\n<b>⚠️ 流量信息格式错误</b>\n\n"
+                                        final_output += f"<blockquote><b>✈️ 机场名称</b>: {airport_name}\n<b>🔗 链接</b>: <code>{url}</code>\n<b>⚠️ 流量信息格式错误</b></blockquote>\n"
                                 else:
-                                    final_output += f"<b>✈️ 机场名称</b>: {airport_name}\n<b>🔗 链接</b>: <code>{url}</code>\n<b>ℹ️ 无流量信息</b>\n\n"
+                                    final_output += f"<blockquote><b>✈️ 机场名称</b>: {airport_name}\n<b>🔗 链接</b>: <code>{url}</code>\n<b>ℹ️ 无流量信息</b></blockquote>\n"
                             else:
-                                final_output += f"<b>🔗 链接</b>: <code>{url}</code>\n<b>❌ 无法访问 (HTTP {res.status})</b>\n\n"
+                                final_output += f"<b>🔗 链接</b>: <code>{url}</code>\n<b>❌ 无法访问 (HTTP {res.status})</b>\n"
                 except Exception as e:
                     final_output += f"<b>🔗 链接</b>: <code>{url}</code>\n<b>⚠️ 处理错误: {str(e)}</b>\n\n"
             
