@@ -2,7 +2,8 @@
 适用于 [apt插件管理器](modules/apt_module.py) 的源仓库
 
 - 添加源指令
-`,apt source add https://raw.githubusercontent.com/lanyi233/aidepack2/refs/heads/main/source.json`
+```
+,apt source add https://raw.githubusercontent.com/lanyi233/aidepack2/refs/heads/main/source.json```
 
 ## Fork指南
 ### 仓库环境变量
