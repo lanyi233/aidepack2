@@ -3,14 +3,22 @@ from typing import List, Dict, Tuple
 from telethon.events import NewMessage
 from urllib.parse import urlparse
 from modules.base_module import BaseModule
-# 确保 requests 模块可用
+
+# 自动安装依赖的函数
+def _install_package(package_name: str):
+    try:
+        import importlib
+        import subprocess
+        subprocess.check_call(['pip', 'install', package_name])
+        importlib.invalidate_caches()  # 清除导入缓存
+    except subprocess.CalledProcessError:
+        raise ImportError(f"Failed to install {package_name}")
+
+# 检查并安装必要的依赖
 try:
     import requests
 except ImportError:
-    import sys
-    import subprocess
-    print("正在安装 requests 模块...", file=sys.stderr)
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "requests"])
+    _install_package('requests')
     import requests
 
 class IPQueryModule(BaseModule):
