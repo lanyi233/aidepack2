@@ -130,7 +130,7 @@ class ShellModule(BaseModule):
             status = "✅" if exit_code == 0 else "⚠️"
             
             await event.edit(
-                f"{status}运行完成 [<code>{command}</code>] (退出码: {exit_code})\n<blockquote>{truncated}</blockquote>",
+                f"{status}运行完成 [<code>{command}</code>] (Code: {exit_code})\n<blockquote>{truncated}</blockquote>",
                 parse_mode='html'
             )
             
