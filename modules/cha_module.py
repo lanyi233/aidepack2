@@ -7,7 +7,6 @@ from typing import List, Dict
 from telethon.events import NewMessage
 from modules.base_module import BaseModule
 from urllib.parse import unquote
-import aiohttp
 
 def _install_package(package_name: str):
     try:
