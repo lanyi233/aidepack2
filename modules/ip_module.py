@@ -3,16 +3,14 @@ from typing import List, Dict, Tuple
 from telethon.events import NewMessage
 from urllib.parse import urlparse
 from modules.base_module import BaseModule
+# 确保 requests 模块可用
 try:
     import requests
 except ImportError:
     import sys
     import subprocess
-    subprocess.check_call(
-        [sys.executable, "-m", "pip", "install", "requests"],
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL
-    )
+    print("正在安装 requests 模块...", file=sys.stderr)
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "requests"])
     import requests
 
 class IPQueryModule(BaseModule):
