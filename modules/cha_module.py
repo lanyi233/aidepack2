@@ -10,6 +10,8 @@ from urllib.parse import unquote
 
 def _install_package(package_name: str):
     try:
+        import importlib
+        import subprocess
         subprocess.check_call(['pip', 'install', package_name])
         importlib.invalidate_caches()
     except subprocess.CalledProcessError:
