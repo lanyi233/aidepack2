@@ -1,9 +1,19 @@
-import requests
 import re
 from typing import List, Dict, Tuple
 from telethon.events import NewMessage
 from urllib.parse import urlparse
 from modules.base_module import BaseModule
+try:
+    import requests
+except ImportError:
+    import sys
+    import subprocess
+    subprocess.check_call(
+        [sys.executable, "-m", "pip", "install", "requests"],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL
+    )
+    import requests
 
 class IPQueryModule(BaseModule):
     def __init__(self):
