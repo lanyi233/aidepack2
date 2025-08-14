@@ -11,6 +11,6 @@
 - 结尾为 `_module.py`
 - 必须在文件开头有 `from modules.base_module import BaseModule`
 
-### [仓库环境变量](settings/variables/actions)
+### 仓库环境变量
 - `MODULE_NAME`: 源名称
 - `MODULE_ID`: 源ID
