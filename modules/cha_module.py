@@ -7,19 +7,25 @@ from typing import List, Dict
 from telethon.events import NewMessage
 from modules.base_module import BaseModule
 from urllib.parse import unquote
-from bs4 import BeautifulSoup
 import aiohttp
+
 def _install_package(package_name: str):
     try:
         subprocess.check_call(['pip', 'install', package_name])
         importlib.invalidate_caches()
     except subprocess.CalledProcessError:
         raise ImportError(f"Failed to install {package_name}")
+
 try:
     import bs4
 except ImportError:
     _install_package('bs4')
     import bs4
+try:
+    import aiohttp
+except ImportError:
+    _install_package('aiohttp')
+    import aiohttp
 
 class SubInfoModule(BaseModule):
     def __init__(self):
