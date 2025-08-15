@@ -3,10 +3,7 @@ name: Generate Module Manifest
 on:
   push:
     paths:
-      - 'modules/*.py'
-
-permissions:
-  contents: write
+      - 'modules/**/*.py'
 
 jobs:
   generate-manifest:
@@ -19,8 +16,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -34,29 +29,30 @@ jobs:
           import os
           import re
           from pathlib import Path
+          from datetime import datetime
           
-          # 配置参数
           MODULES_DIR = "modules"
           OUTPUT_FILE = "source.json"
           
           def extract_module_info(file_path):
-              """从Python文件中提取模块信息"""
               with open(file_path, 'r', encoding='utf-8') as f:
                   content = f.read()
               
-              # 查找类定义 (BaseModule的子类)
               class_match = re.search(r'class\s+(\w+)\(BaseModule\):', content)
               if not class_match:
                   return None
               
-              # 查找self.name赋值
               name_match = re.search(r'self\.name\s*=\s*[\'"](.+?)[\'"]', content)
               if not name_match:
                   return None
               
+              version_match = re.search(r'self\.version\s*=\s*[\'"](.+?)[\'"]', content)
+              version = version_match.group(1) if version_match else "1.0.0"
+              
               return {
                   "class_name": class_match.group(1),
-                  "name": name_match.group(1)
+                  "name": name_match.group(1),
+                  "version": version
               }
           
           def main():
@@ -66,28 +62,26 @@ jobs:
                   if not py_file.is_file():
                       continue
                   
-                  # 生成模块ID (移除后缀)
                   module_id = py_file.stem.replace('_module', '')
                   
-                  # 提取模块信息
                   info = extract_module_info(py_file)
                   if not info:
                       continue
                   
-                  # 构建raw文件URL
                   file_path = py_file.relative_to(MODULES_DIR)
                   raw_url = f"{os.environ['BASE_URL']}/{os.environ['REPO_NAME']}/{os.environ['BRANCH']}/{MODULES_DIR}/{file_path}"
                   
                   modules.append({
                       "id": module_id,
                       "name": info['name'],
+                      "version": info['version'],
                       "url": raw_url
                   })
               
-              # 构建最终JSON结构
               manifest = {
                   "name": "${{ vars.MODULE_NAME }}",
                   "id": "${{ vars.MODULE_ID }}",
+                  "date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                   "data": modules
               }
               
@@ -107,5 +101,5 @@ jobs:
           git config user.name "github-actions"
           git config user.email "github-actions@example.com"
           git add source.json
-          git diff --quiet && git diff --staged --quiet || git commit -m "Update source.json"
+          git diff --quiet && git diff --staged --quiet || git commit -m "Update source.json [auto]"
           git push
