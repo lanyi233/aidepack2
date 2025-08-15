@@ -11,12 +11,6 @@ cd ${tgaide_dir}
 curl -L https://raw.githubusercontent.com/lanyi233/aidepack2/refs/heads/main/modules/apt_module.py -o third_party_modules/apt_module.py
 ```
 
-- 重启tgaide
-
-```text
-,reboot
-```
-
 - 更新tgaide
 
 ```text
