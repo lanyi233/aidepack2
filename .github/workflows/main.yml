@@ -106,7 +106,7 @@ jobs:
           if __name__ == "__main__":
               main()
           EOF
-
+          pip install pytz
           python generate_manifest.py
 
       - name: Commit and push changes
