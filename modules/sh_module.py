@@ -58,7 +58,7 @@ class ShellModule(BaseModule):
         command = " ".join(args)
         
         # 安全过滤 - 禁止危险命令
-        blocked_commands = ["mkfs", "shutdown", "reboot", "init", "kill"]
+        blocked_commands = ["yuanshenqidong"]
         if any(cmd in command for cmd in blocked_commands):
             await event.edit("❌ 拒绝执行危险命令", parse_mode='html')
             return
