@@ -34,7 +34,7 @@ class PluginManagerModule(BaseModule):
         super().__init__()
         self.name = "插件管理器"
         self.description = "管理第三方插件（启用/禁用/安装/上传/列表/删除）"
-        self.version = "1.5.0"
+        self.version = "1.6.0"
         self.client = None
 
     def get_commands(self) -> Dict[str, str]:
@@ -333,6 +333,7 @@ class PluginManagerModule(BaseModule):
         for i, source in enumerate(self.sources, 1):
             message += f"{i}: {source.get('name', '未命名源')} ({source.get('id', '未知ID')})\n"
             message += f"   模块数量: {len(source.get('data', []))}\n"
+            message += f"   更新时间: <code>{source.get('date')}</code>\n"
             message += f"   源URL: <code>{source.get('url')}</code>\n\n"
         
         await event.edit(message, parse_mode='html')
