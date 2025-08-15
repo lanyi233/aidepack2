@@ -4,6 +4,12 @@ on:
   push:
     paths:
       - 'modules/**/*.py'
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: '触发原因'
+        required: false
+        default: 'update for web'
 
 permissions:
   contents: write
