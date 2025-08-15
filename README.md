@@ -1,6 +1,6 @@
 # Tgaide 插件仓库
 
-适用于 [apt插件管理器](modules/apt_module.py) 的源仓库
+适用于 [Tgaide](https://t.me/tgaide_channel) [apt插件管理器](modules/apt_module.py) 的源仓库
 
 ## 使用apt
 
