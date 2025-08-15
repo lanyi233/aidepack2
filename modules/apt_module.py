@@ -11,15 +11,15 @@ from telethon.events import NewMessage
 from telethon.tl.types import MessageMediaDocument
 from modules.base_module import BaseModule
 
-# 自动安装依赖的函数
 def _install_package(package_name: str):
     try:
-        subprocess.check_call(['pip', 'install', package_name])
-        importlib.invalidate_caches()  # 清除导入缓存
+        import subprocess
+        import importlib
+        subprocess.check_call([sys.executable, '-m', 'pip', 'install', package_name])
+        importlib.invalidate_caches()
     except subprocess.CalledProcessError:
         raise ImportError(f"Failed to install {package_name}")
 
-# 检查并安装必要的依赖
 try:
     import aiohttp
 except ImportError:
