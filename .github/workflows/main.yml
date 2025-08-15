@@ -41,6 +41,7 @@ jobs:
           import re
           from pathlib import Path
           from datetime import datetime
+          import pytz
           
           MODULES_DIR = "modules"
           OUTPUT_FILE = "source.json"
@@ -89,10 +90,11 @@ jobs:
                       "url": raw_url
                   })
               
+              tz = pytz.timezone('Asia/Shanghai')
               manifest = {
                   "name": "${{ vars.MODULE_NAME }}",
                   "id": "${{ vars.MODULE_ID }}",
-                  "date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                  "date": datetime.now(tz).strftime("%Y-%m-%d %H:%M:%S"),
                   "data": modules
               }
               
