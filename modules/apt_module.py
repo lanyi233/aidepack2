@@ -34,7 +34,7 @@ class PluginManagerModule(BaseModule):
         super().__init__()
         self.name = "插件管理器"
         self.description = "管理第三方插件（启用/禁用/安装/上传/列表/删除）"
-        self.version = "1.0.0"
+        self.version = "1.5.0"
         self.client = None
 
     def get_commands(self) -> Dict[str, str]:
@@ -47,7 +47,7 @@ class PluginManagerModule(BaseModule):
             "name": self.name,
             "description": self.description,
             "version": self.version,
-            "author": "DeepSeek"
+            "author": "lanyi233"
         }
 
     def get_command_usage(self, command: str) -> str:
@@ -85,17 +85,17 @@ class PluginManagerModule(BaseModule):
             if subcmd == "list":
                 await self._list_plugins(event)
             elif subcmd == "disable" and len(args) > 1:
-                await self._toggle_plugin(event, args[1], disable=True)
+                await self._toggle_plugin(event, args, disable=True)
             elif subcmd == "enable" and len(args) > 1:
-                await self._toggle_plugin(event, args[1], disable=False)
+                await self._toggle_plugin(event, args, disable=False)
             elif subcmd == "install" and len(args) > 1:
-                await self._install_from_source(event, args[1])
+                await self._install_from_source(event, args[1:])
             elif subcmd == "install":
                 await self._install_plugin(event)
             elif subcmd == "upload" and len(args) > 1:
-                await self._upload_plugin(event, args[1])
+                await self._upload_plugin(event, args[1:])
             elif subcmd == "remove" and len(args) > 1:
-                await self._remove_plugin(event, args[1])
+                await self._remove_plugin(event, args[1:])
             elif subcmd == "update":
                 await self._update_sources(event)
             elif subcmd == "search" and len(args) > 1:
@@ -151,31 +151,39 @@ class PluginManagerModule(BaseModule):
         
         await event.edit(message, parse_mode='html')
 
-    async def _toggle_plugin(self, event: NewMessage.Event, plugin_name: str, disable: bool) -> None:
+    async def _toggle_plugin(self, event: NewMessage.Event, args: List[str], disable: bool) -> None:
         """启用或禁用插件"""
-        base_name = f"{plugin_name}_module.py"
-        enabled_path = os.path.join(PLUGINS_DIR, base_name)
-        disabled_path = enabled_path + ".disable"
-        
-        action = "禁用" if disable else "启用"
-        target_path = disabled_path if disable else enabled_path
-        source_path = enabled_path if disable else disabled_path
-        
-        if not os.path.exists(source_path):
-            # 检查另一种状态是否存在
-            alt_path = disabled_path if not disable else enabled_path
-            if os.path.exists(alt_path):
-                status = "已禁用" if not disable else "已启用"
-                await event.edit(f"⚠️ 插件 <b>{plugin_name}</b> 当前状态为: {status}", parse_mode='html')
-                return
-            await event.edit(f"❌ 找不到插件: <b>{plugin_name}</b>", parse_mode='html')
+        if len(args) < 2:
+            await event.edit(f"❌ 请指定要{'禁用' if disable else '启用'}的插件名", parse_mode='html')
             return
-        
-        try:
-            os.rename(source_path, target_path)
-            await event.edit(f"✅ 已{action}插件: <b>{plugin_name}</b>", parse_mode='html')
-        except Exception as e:
-            await event.edit(f"❌ {action}插件失败: {str(e)}", parse_mode='html')
+        plugin_names = args[1:]
+        action = "禁用" if disable else "启用"
+        results = []
+
+        for name in plugin_names:
+            base_name = f"{name}_module.py"
+            enabled_path = os.path.join(PLUGINS_DIR, base_name)
+            disabled_path = enabled_path + ".disable"
+
+            target_path = disabled_path if disable else enabled_path
+            source_path = enabled_path if disable else disabled_path
+            
+            if not os.path.exists(source_path):
+                alt_path = disabled_path if not disable else enabled_path
+                if os.path.exists(alt_path):
+                    status = "已禁用" if not disable else "已启用"
+                    results.append(f"⚠️ {name}: 当前状态为 {status}")
+                else:
+                    results.append(f"❌ {name}: 找不到插件或已禁用")
+                continue
+
+            try:
+                os.rename(source_path, target_path)
+                results.append(f"✅ {name}: 已{action}")
+            except Exception as e:
+                results.append(f"❌ {name}: {action}失败 ({str(e)})")
+
+        await event.edit("\n".join(results), parse_mode='html')
 
     async def _install_plugin(self, event: NewMessage.Event) -> None:
         """从消息回复中安装插件"""
@@ -221,72 +229,77 @@ class PluginManagerModule(BaseModule):
             if os.path.exists(temp_path):
                 os.remove(temp_path)
 
-    async def _upload_plugin(self, event: NewMessage.Event, plugin_name: str) -> None:
-        """上传插件文件（修复文件名问题）"""
-        base_name = f"{plugin_name}_module.py"
-        enabled_path = os.path.join(PLUGINS_DIR, base_name)
-        disabled_path = enabled_path + ".disable"
-        
-        # 检查文件是否存在
-        file_path = None
-        is_disabled = False
-        
-        if os.path.exists(enabled_path):
-            file_path = enabled_path
-        elif os.path.exists(disabled_path):
-            file_path = disabled_path
-            is_disabled = True
-        else:
-            await event.edit(f"❌ 找不到插件: <b>{plugin_name}</b>", parse_mode='html')
-            return
-        
-        try:
-            # 创建临时目录
-            with tempfile.TemporaryDirectory() as tmp_dir:
-                # 确定目标文件名
-                target_file = base_name
-                
-                # 如果是禁用状态，需要重命名文件
-                if is_disabled:
-                    # 创建临时文件路径
-                    temp_path = os.path.join(tmp_dir, base_name)
-                    # 复制内容到临时文件
-                    shutil.copyfile(file_path, temp_path)
-                else:
-                    # 直接使用原文件
-                    temp_path = file_path
-                
-                # 上传文件
-                await event.edit(f"⏫ 正在上传插件: <b>{plugin_name}</b>...", parse_mode='html')
-                await event.reply(f"📦 Tgaide插件: {plugin_name}", file=temp_path)
-                
-            # 删除上传中的提示消息
-            await event.delete()
-        except Exception as e:
-            await event.edit(f"❌ 上传失败: {str(e)}", parse_mode='html')
-
-    async def _remove_plugin(self, event: NewMessage.Event, plugin_name: str) -> None:
-        """删除插件"""
-        base_name = f"{plugin_name}_module.py"
-        enabled_path = os.path.join(PLUGINS_DIR, base_name)
-        disabled_path = enabled_path + ".disable"
-        
-        # 检查文件是否存在
-        found = False
-        for path in [enabled_path, disabled_path]:
-            if os.path.exists(path):
-                found = True
-                try:
-                    os.remove(path)
-                except Exception as e:
-                    await event.edit(f"❌ 删除失败: {str(e)}", parse_mode='html')
-                    return
-        
-        if not found:
-            await event.edit(f"❌ 找不到插件: <b>{plugin_name}</b>", parse_mode='html')
-            return
+    async def _upload_plugin(self, event: NewMessage.Event, plugin_names: List[str]) -> None:
+        """多个插件文件"""
+        for plugin_name in plugin_names:
+            base_name = f"{plugin_name}_module.py"
+            enabled_path = os.path.join(PLUGINS_DIR, base_name)
+            disabled_path = enabled_path + ".disable"
             
-        await event.edit(f"🗑️ 已删除插件: <b>{plugin_name}</b>", parse_mode='html')
+            # 检查文件是否存在
+            file_path = None
+            is_disabled = False
+            
+            if os.path.exists(enabled_path):
+                file_path = enabled_path
+            elif os.path.exists(disabled_path):
+                file_path = disabled_path
+                is_disabled = True
+            else:
+                await event.edit(f"❌ 找不到插件: <b>{plugin_name}</b>", parse_mode='html')
+                continue
+            
+            try:
+                # 创建临时目录
+                with tempfile.TemporaryDirectory() as tmp_dir:
+                    # 确定目标文件名
+                    target_file = base_name
+                    
+                    if is_disabled:
+                        temp_path = os.path.join(tmp_dir, base_name)
+                        shutil.copyfile(file_path, temp_path)
+                    else:
+                        temp_path = file_path
+                    
+                    await event.edit(f"⏫ 正在上传插件: <b>{plugin_name}</b>...", parse_mode='html')
+                    await event.reply(f"📦 Tgaide插件: {plugin_name}", file=temp_path)
+            except Exception as e:
+                await event.edit(f"❌ 上传 {plugin_name} 失败: {str(e)}", parse_mode='html')
+        await event.delete()
+
+    async def _remove_plugin(self, event: NewMessage.Event, plugin_names: list[str]) -> None:
+        """批量删除插件"""
+        success = []
+        failed = []
+
+        for plugin_name in plugin_names:
+            base_name = f"{plugin_name}_module.py"
+            enabled_path = os.path.join(PLUGINS_DIR, base_name)
+            disabled_path = enabled_path + ".disable"
+            
+            # 检查文件是否存在
+            found = False
+            for path in [enabled_path, disabled_path]:
+                if os.path.exists(path):
+                    found = True
+                    try:
+                        os.remove(path)
+                        success.append(plugin_name)
+                    except Exception as e:
+                        failed.append(f"{plugin_name} ({str(e)})")
+                        break
+            
+            if not found:
+                failed.append(f"{plugin_name} (未找到)")
+
+        # 生成结果消息
+        msg = []
+        if success:
+            msg.append(f"🗑️ 已删除插件: <b>{', '.join(success)}</b>")
+        if failed:
+            msg.append(f"❌ 删除失败: <b>{', '.join(failed)}</b>")
+        
+        await event.edit("\n".join(msg), parse_mode='html')
 
     def _get_plugin_name(self, filename: str) -> str:
         """从文件名提取插件名"""
@@ -385,72 +398,78 @@ class PluginManagerModule(BaseModule):
                     })
         return results
     
-    async def _install_from_source(self, event: NewMessage.Event, plugin_id: str) -> None:
-        """从源安装插件"""
-        # 检查插件ID格式
-        if '/' in plugin_id:
-            source_id, plugin_id = plugin_id.split('/', 1)
-            # 在指定源中查找
-            results = []
-            for source in self.sources:
-                if source.get('id') == source_id:
-                    for module in source.get('data', []):
-                        if module.get('id') == plugin_id:
-                            results.append({
-                                'source': source,
-                                'module': module
-                            })
-        else:
-            # 在所有源中查找
-            results = await self._find_plugin_in_sources(plugin_id)
+    async def _install_from_source(self, event: NewMessage.Event, plugin_ids: list[str]) -> None:
+        await self._update_sources(event)
+        """从源安装多个插件"""
+        success = []
+        failed = []
         
-        if not results:
-            await event.edit(f"❌ 未找到插件: {plugin_id}", parse_mode='html')
-            return
-        
-        if len(results) > 1:
-            # 处理冲突
-            message = "⚠️ 安装冲突\n发现有多个源同时注册了该插件，需指定源进行安装\n\n"
-            for result in results:
-                source = result['source']
-                module = result['module']
-                message += f"<code>,apt install {source['id']}/{plugin_id}</code> - {source['name']}/{module['name']}\n"
+        for plugin_id in plugin_ids:
+            # 检查插件ID格式
+            if '/' in plugin_id:
+                source_id, plugin_id = plugin_id.split('/', 1)
+                # 在指定源中查找
+                results = []
+                for source in self.sources:
+                    if source.get('id') == source_id:
+                        for module in source.get('data', []):
+                            if module.get('id') == plugin_id:
+                                results.append({
+                                    'source': source,
+                                    'module': module
+                                })
+            else:
+                # 在所有源中查找
+                results = await self._find_plugin_in_sources(plugin_id)
             
-            await event.edit(message, parse_mode='html')
-            return
-        
-        # 只有一个结果，安装插件
-        source = results[0]['source']
-        module = results[0]['module']
-        module_url = module['url']
-        
-        # 下载插件
-        try:
-            await event.edit(f"⏬ 正在从源 {source['name']} 下载插件: {module['name']}...", parse_mode='html')
+            if not results:
+                failed.append(plugin_id)
+                continue
             
-            async with aiohttp.ClientSession() as session:
-                async with session.get(module_url) as response:
-                    if response.status != 200:
-                        await event.edit(f"❌ 下载插件失败: HTTP {response.status}", parse_mode='html')
-                        return
-                    
-                    content = await response.text()
-                    
-                    # 验证内容
-                    if "class" not in content or "BaseModule" not in content:
-                        await event.edit("❌ 无效的插件文件（缺少必要组件）", parse_mode='html')
-                        return
-                    
-                    # 保存文件
-                    filename = f"{plugin_id}_module.py"
-                    filepath = os.path.join(PLUGINS_DIR, filename)
-                    
-                    with open(filepath, 'w', encoding='utf-8') as f:
-                        f.write(content)
-                    
-                    await event.edit(f"✅ 已安装插件: {module['name']} ({plugin_id})", parse_mode='html')
-        except Exception as e:
-            await event.edit(f"❌ 安装失败: {str(e)}", parse_mode='html')
+            if len(results) > 1:
+                # 跳过冲突的插件
+                failed.append(f"{plugin_id} (冲突)")
+                continue
+            
+            # 只有一个结果，安装插件
+            source = results[0]['source']
+            module = results[0]['module']
+            module_url = module['url']
+            
+            # 下载插件
+            try:
+                async with aiohttp.ClientSession() as session:
+                    async with session.get(module_url) as response:
+                        if response.status != 200:
+                            failed.append(f"{plugin_id} (HTTP {response.status})")
+                            continue
+                        
+                        content = await response.text()
+                        
+                        # 验证内容
+                        if "class" not in content or "BaseModule" not in content:
+                            failed.append(f"{plugin_id} (无效文件)")
+                            continue
+                        
+                        # 保存文件
+                        filename = f"{plugin_id}_module.py"
+                        filepath = os.path.join(PLUGINS_DIR, filename)
+                        
+                        with open(filepath, 'w', encoding='utf-8') as f:
+                            f.write(content)
+                        
+                        success.append(f"{module['name']} ({plugin_id})")
+            except Exception as e:
+                failed.append(f"{plugin_id} ({str(e)})")
+        
+        # 生成结果消息
+        message = ""
+        if success:
+            message += f"✅ 成功安装: {', '.join(success)}\n"
+        if failed:
+            message += f"❌ 安装失败: {', '.join(failed)}"
+        
+        await event.edit(message.strip(), parse_mode='html')
     
     async def _search_plugins(self, event: NewMessage.Event, keyword: str) -> None:
         """搜索插件"""
