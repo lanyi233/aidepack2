@@ -1,12 +1,13 @@
 {
   "name": "lanyi233",
   "id": "lanyi233",
-  "date": "2025-08-17 02:37:33",
+  "date": "2025-08-17 02:43:32",
   "data": [
     {
       "id": "ip",
       "name": "网络信息查询",
       "author": "lanyi233",
+      "description": "查询IP地址或域名的网络信息",
       "version": "3.0.0",
       "url": "https://raw.githubusercontent.com/lanyi233/aidepack2/main/modules/ip_module.py"
     },
@@ -14,6 +15,7 @@
       "id": "cha",
       "name": "订阅链接信息查询",
       "author": "@zhetengsha",
+      "description": "识别订阅链接并获取流量信息和机场名称",
       "version": "1.1.0",
       "url": "https://raw.githubusercontent.com/lanyi233/aidepack2/main/modules/cha_module.py"
     },
@@ -21,6 +23,7 @@
       "id": "apt",
       "name": "插件管理器",
       "author": "lanyi233",
+      "description": "管理第三方插件（启用/禁用/安装/上传/列表/删除）",
       "version": "1.6.1",
       "url": "https://raw.githubusercontent.com/lanyi233/aidepack2/main/modules/apt_module.py"
     },
@@ -28,6 +31,7 @@
       "id": "sh",
       "name": "Shell执行器",
       "author": "lanyi233",
+      "description": "执行Shell命令并实时显示输出",
       "version": "1.0.0",
       "url": "https://raw.githubusercontent.com/lanyi233/aidepack2/main/modules/sh_module.py"
     }
