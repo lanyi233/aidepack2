@@ -506,7 +506,7 @@ class PluginManagerModule(BaseModule):
         for source_id, data in grouped.items():
             message += f"<b>源: {data['source_name']} ({source_id})</b>\n"
             for module in data['modules']:
-                message += f"<blockquote><code>{source_id}/{module['id']}</code> - {module['name']} {module['author']}({module['version']})</blockquote>\n"
+                message += f"<blockquote><code>{source_id}/{module['id']}</code> - {module['name']}({module['version']}) {module['author']}</blockquote>\n"
             message += "\n"
         
         await event.edit(message, parse_mode='html')
