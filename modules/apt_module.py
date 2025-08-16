@@ -492,7 +492,7 @@ class PluginManagerModule(BaseModule):
             await event.edit(f"🔍 未找到包含关键词 <b>{keyword}</b> 的插件", parse_mode='html')
             return
         
-        message = "🔍 <b>插件搜索结果</b>\n\n"
+        message = f"🔍 <b>插件搜索结果</b> <code>{keyword.lower()}</code>\n\n"
         
         # 分组显示结果
         grouped = {}
