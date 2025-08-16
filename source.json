@@ -1,29 +1,33 @@
 {
   "name": "lanyi233",
   "id": "lanyi233",
-  "date": "2025-08-15 19:12:16",
+  "date": "2025-08-17 02:32:10",
   "data": [
     {
       "id": "ip",
       "name": "网络信息查询",
+      "author": "网络信息查询",
       "version": "3.0.0",
       "url": "https://raw.githubusercontent.com/lanyi233/aidepack2/main/modules/ip_module.py"
     },
     {
       "id": "cha",
       "name": "订阅链接信息查询",
+      "author": "订阅链接信息查询",
       "version": "1.1.0",
       "url": "https://raw.githubusercontent.com/lanyi233/aidepack2/main/modules/cha_module.py"
     },
     {
       "id": "apt",
       "name": "插件管理器",
-      "version": "1.6.0",
+      "author": "插件管理器",
+      "version": "1.6.1",
       "url": "https://raw.githubusercontent.com/lanyi233/aidepack2/main/modules/apt_module.py"
     },
     {
       "id": "sh",
       "name": "Shell执行器",
+      "author": "Shell执行器",
       "version": "1.0.0",
       "url": "https://raw.githubusercontent.com/lanyi233/aidepack2/main/modules/sh_module.py"
     }
