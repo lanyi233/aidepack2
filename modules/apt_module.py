@@ -480,7 +480,9 @@ class PluginManagerModule(BaseModule):
         # 在所有源中搜索
         for source in self.sources:
             for module in source.get('data', []):
-                if keyword.lower() in module.get('name', '').lower() or keyword.lower() in module.get('id', '').lower():
+                if (keyword.lower() in module.get('name', '').lower() or
+                    keyword.lower() in module.get('id', '').lower() or
+                    keyword.lower() in module.get('description', '').lower()):
                     results.append({
                         'source': source,
                         'module': module
