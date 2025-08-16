@@ -68,6 +68,7 @@ jobs:
               return {
                   "class_name": class_match.group(1),
                   "name": name_match.group(1),
+                  "author": author_match.group(1),
                   "version": version
               }
           
@@ -90,7 +91,7 @@ jobs:
                   modules.append({
                       "id": module_id,
                       "name": info['name'],
-                      "author": info['name'],
+                      "author": info['author'],
                       "version": info['version'],
                       "url": raw_url
                   })
