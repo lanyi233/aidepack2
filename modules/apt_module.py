@@ -34,7 +34,8 @@ class PluginManagerModule(BaseModule):
         super().__init__()
         self.name = "插件管理器"
         self.description = "管理第三方插件（启用/禁用/安装/上传/列表/删除）"
-        self.version = "1.6.0"
+        self.version = "1.6.1"
+        self.author = "lanyi233"
         self.client = None
 
     def get_commands(self) -> Dict[str, str]:
@@ -47,7 +48,7 @@ class PluginManagerModule(BaseModule):
             "name": self.name,
             "description": self.description,
             "version": self.version,
-            "author": "lanyi233"
+            "author": self.author
         }
 
     def get_command_usage(self, command: str) -> str:
@@ -505,7 +506,7 @@ class PluginManagerModule(BaseModule):
         for source_id, data in grouped.items():
             message += f"<b>源: {data['source_name']} ({source_id})</b>\n"
             for module in data['modules']:
-                message += f"<blockquote><code>{source_id}/{module['id']}</code> - {module['name']}({module['version']})</blockquote>\n"
+                message += f"<blockquote><code>{source_id}/{module['id']}</code> - {module['name']} {module['author']}({module['version']})</blockquote>\n"
             message += "\n"
         
         await event.edit(message, parse_mode='html')

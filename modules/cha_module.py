@@ -34,6 +34,7 @@ class SubInfoModule(BaseModule):
         self.name = "订阅链接信息查询"
         self.description = "识别订阅链接并获取流量信息和机场名称"
         self.version = "1.1.0"
+        self.author = "@zhetengsha"
         self.client = None
         self.dependencies_installed = False
 
@@ -47,7 +48,7 @@ class SubInfoModule(BaseModule):
             "name": self.name,
             "description": self.description,
             "version": self.version,
-            "author": "@zhetengsha"
+            "author": self.author
         }
 
     def get_command_usage(self, command: str) -> str:

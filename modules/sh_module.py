@@ -10,8 +10,9 @@ class ShellModule(BaseModule):
         self.name = "Shell执行器"
         self.description = "执行Shell命令并实时显示输出"
         self.version = "1.0.0"
+        self.author = "lanyi233"
         self.client = None
-        self.active_processes = {}  # 跟踪正在运行的进程
+        self.active_processes = {}
 
     def get_commands(self) -> Dict[str, str]:
         return {
@@ -23,7 +24,7 @@ class ShellModule(BaseModule):
             "name": self.name,
             "description": self.description,
             "version": self.version,
-            "author": "lanyi233"
+            "author": self.author
         }
 
     def get_command_usage(self, command: str) -> str:

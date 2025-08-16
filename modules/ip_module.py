@@ -25,6 +25,7 @@ class IPQueryModule(BaseModule):
         self.name = "网络信息查询"
         self.description = "查询IP地址或域名的网络信息"
         self.version = "3.0.0"
+        self.author = "lanyi233"
         self.client = None
         self.api_endpoint = "http://ip-api.com/json/"
         self.timeout = 8
@@ -60,7 +61,7 @@ class IPQueryModule(BaseModule):
             "name": self.name,
             "description": self.description,
             "version": self.version,
-            "author": "网络服务"
+            "author": self.author
         }
 
     def get_command_usage(self, command: str) -> str:

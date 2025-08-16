@@ -57,6 +57,10 @@ jobs:
               name_match = re.search(r'self\.name\s*=\s*[\'"](.+?)[\'"]', content)
               if not name_match:
                   return None
+
+              author_match = re.search(r'self\.author\s*=\s*[\'"](.+?)[\'"]', content)
+              if not author_match:
+                  return None
               
               version_match = re.search(r'self\.version\s*=\s*[\'"](.+?)[\'"]', content)
               version = version_match.group(1) if version_match else "1.0.0"
@@ -86,6 +90,7 @@ jobs:
                   modules.append({
                       "id": module_id,
                       "name": info['name'],
+                      "author": info['name'],
                       "version": info['version'],
                       "url": raw_url
                   })
