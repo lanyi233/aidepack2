@@ -61,6 +61,10 @@ jobs:
               author_match = re.search(r'self\.author\s*=\s*[\'"](.+?)[\'"]', content)
               if not author_match:
                   return None
+
+              description_match = re.search(r'self\.description\s*=\s*[\'"](.+?)[\'"]', content)
+              if not description_match:
+                  return None
               
               version_match = re.search(r'self\.version\s*=\s*[\'"](.+?)[\'"]', content)
               version = version_match.group(1) if version_match else "1.0.0"
@@ -68,6 +72,7 @@ jobs:
               return {
                   "class_name": class_match.group(1),
                   "name": name_match.group(1),
+                  "description": description_match.group(1),
                   "author": author_match.group(1),
                   "version": version
               }
@@ -92,6 +97,7 @@ jobs:
                       "id": module_id,
                       "name": info['name'],
                       "author": info['author'],
+                      "description": info['description'],
                       "version": info['version'],
                       "url": raw_url
                   })

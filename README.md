@@ -35,6 +35,17 @@ curl -L https://raw.githubusercontent.com/lanyi233/aidepack2/refs/heads/main/mod
 
 - 结尾为 `_module.py`
 - 必须在文件开头有 `from modules.base_module import BaseModule`
+- 在 `__init__(self)` 内定义以下值
+
+```python
+class XXX(BaseModule):
+    def __init__(self):
+        super().__init__()
+        self.name = "插件名称"
+        self.description = "简介"
+        self.version = "版本"
+        self.author = "作者"
+```
 
 ### 仓库环境变量
 
